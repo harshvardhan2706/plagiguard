@@ -58,21 +58,12 @@ public class AdminService {
 
     public Admin createAdmin(Admin admin) {
         LOGGER.info("Creating new admin: {}", admin.getUsername());
-        
         // Validate input
         if (admin.getPassword() == null || admin.getPassword().trim().isEmpty()) {
             throw new IllegalArgumentException("Password cannot be empty");
         }
-        
-        // Hash the password
-        String hashedPassword = passwordEncoder.encode(admin.getPassword().trim());
-        admin.setPassword(hashedPassword);
-        
-        LOGGER.debug("Password hashed successfully for admin: {}", admin.getUsername());
-        LOGGER.debug("Hashed password length: {}", hashedPassword.length());
-        
+        // Do NOT hash the password here; it should already be hashed in the controller
         admin.setCreatedAt(LocalDateTime.now());
-        
         try {
             Admin createdAdmin = adminRepository.save(admin);
             LOGGER.info("Admin created successfully: {}", createdAdmin.getUsername());

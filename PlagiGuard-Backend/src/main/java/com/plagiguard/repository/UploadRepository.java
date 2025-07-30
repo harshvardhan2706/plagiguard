@@ -19,4 +19,6 @@ public interface UploadRepository extends JpaRepository<Upload, Long> {
     
     @Query("SELECT AVG(u.similarityScore) FROM Upload u")
     Double findAverageAIScore();
+    
+    List<Upload> findByUploadDateBefore(LocalDateTime cutoff);
 }

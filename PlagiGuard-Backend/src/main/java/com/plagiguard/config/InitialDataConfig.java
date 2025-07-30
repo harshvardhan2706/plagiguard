@@ -21,20 +21,20 @@ public class InitialDataConfig {
     @Bean
     CommandLineRunner initDatabase() {
         return args -> {
-            System.out.println("Checking for existing admin user...");
-            // Create default admin if not exists
-            if (!adminRepository.existsByUsername("admin")) {
-                Admin admin = new Admin();
-                admin.setUsername("admin");
-                admin.setPassword(passwordEncoder.encode("admin123")); // Default password
-                admin.setFullName("System Administrator");
-                admin.setEmail("admin@plagiguard.com");
-                admin.setRole("ADMIN");
-                admin = adminRepository.save(admin);
-                System.out.println("Default admin user created with id: " + admin.getId());
-            } else {
-                System.out.println("Admin user already exists.");
-            }
+            // System.out.println("Checking for existing admin user...");
+            // // Create default admin if not exists
+            // if (!adminRepository.existsByUsername("admin")) {
+            //     Admin admin = new Admin();
+            //     admin.setUsername("admin");
+            //     admin.setPassword(passwordEncoder.encode("admin123")); // Default password
+            //     admin.setFullName("System Administrator");
+            //     admin.setEmail("admin@plagiguard.com");
+            //     admin.setRole("ADMIN");
+            //     admin = adminRepository.save(admin);
+            //     System.out.println("Default admin user created with id: " + admin.getId());
+            // } else {
+            //     System.out.println("Admin user already exists.");
+            // }
         };
     }
 }

@@ -2,6 +2,8 @@ package com.plagiguard.entity;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -24,6 +26,7 @@ public class Upload {
     private String originalFilename;
     
     @Column(name = "upload_date", columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'", timezone = "UTC")
     private LocalDateTime uploadDate;
     
     @Column(name = "similarity_score", columnDefinition = "DECIMAL(5,2)")
@@ -32,6 +35,9 @@ public class Upload {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+    
+    @Column(name = "file_data", columnDefinition = "LONGBLOB")
+    private byte[] fileData;
 
     public Upload() {
         this.uploadDate = LocalDateTime.now();
@@ -84,5 +90,13 @@ public class Upload {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public byte[] getFileData() {
+        return fileData;
+    }
+
+    public void setFileData(byte[] fileData) {
+        this.fileData = fileData;
     }
 }

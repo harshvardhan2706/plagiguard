@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Service
 public class AIDetectorService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AIDetectorService.class);
-      @Value("${ai.detector.path:PlagiGuard-Backend/py/ai_detector}")
+    @Value("${ai.detector.path:py/ai_detector}")
     private String aiDetectorPath;
     
     @Value("${ai.detector.startup.timeout.seconds:30}")

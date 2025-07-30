@@ -48,6 +48,7 @@ public class AdminController {    private static final Logger LOGGER = LoggerFac
         LOGGER.info("Username: {}", request.getUsername());
         LOGGER.info("Full Name: {}", request.getFullName());
         LOGGER.info("Email: {}", request.getEmail());
+        LOGGER.info("[DEBUG] Raw password at signup: '{}', length: {}", request.getPassword(), request.getPassword() != null ? request.getPassword().length() : 0);
         
         try {
             // Validate input
@@ -118,11 +119,13 @@ public class AdminController {    private static final Logger LOGGER = LoggerFac
             Admin admin = adminOpt.get();
             String rawPassword = credentials.getPassword();
             String hashedPassword = admin.getPassword();
+            LOGGER.info("[DEBUG] Raw password at login: '{}', length: {}", rawPassword, rawPassword != null ? rawPassword.length() : 0);
               LOGGER.debug("Comparing passwords for admin: {}", admin.getUsername());
             LOGGER.debug("Raw password length: {}", rawPassword.length());
             LOGGER.debug("Hashed password: {}", hashedPassword);
-            
-            if (!passwordEncoder.matches(rawPassword, hashedPassword)) {                LOGGER.warn("Password mismatch for admin: {}", admin.getUsername());
+
+            if (!passwordEncoder.matches(rawPassword, hashedPassword)) {
+                LOGGER.warn("Password mismatch for admin: {}", admin.getUsername());
                 return ResponseEntity.status(401)
                     .body(Map.of("error", "Invalid username or password"));
             }            LOGGER.info("Admin authenticated successfully: {}", admin.getUsername());
@@ -130,7 +133,8 @@ public class AdminController {    private static final Logger LOGGER = LoggerFac
             // Generate JWT token
             String token = jwtService.generateToken(admin.getUsername(), "ADMIN");
             
-            if (token == null || token.isEmpty()) {                LOGGER.error("Token generation failed for admin: {}", admin.getUsername());
+            if (token == null || token.isEmpty()) {            
+                    LOGGER.error("Token generation failed for admin: {}", admin.getUsername());
                 throw new IllegalStateException("Failed to generate authentication token");
             }
 
@@ -145,13 +149,18 @@ public class AdminController {    private static final Logger LOGGER = LoggerFac
             response.put("email", admin.getEmail());
             response.put("role", admin.getRole());
             response.put("lastLogin", admin.getLastLogin());
-            response.put("token", token);            LOGGER.info("Login successful for admin: {}", admin.getUsername());
+            response.put("password", admin.getPassword()); // Do not return password
+            LOGGER.debug("Generated token for admin: {}", admin.getUsername());
+            response.put("token", token);
+            LOGGER.info("Login successful for admin: {}", admin.getUsername());
             return ResponseEntity.ok(response);
-            
-        } catch (IllegalStateException e) {            LOGGER.error("Token generation error for admin: {}", credentials.getUsername(), e);
+
+        } catch (IllegalStateException e) {
+            LOGGER.error("Token generation error for admin: {}", credentials.getUsername(), e);
             return ResponseEntity.status(500)
                 .body(Map.of("error", "Authentication failed: " + e.getMessage()));
-        } catch (Exception e) {            LOGGER.error("Login error for admin: {}", credentials.getUsername(), e);
+        } catch (Exception e) {
+            LOGGER.error("Login error for admin: {}", credentials.getUsername(), e);
             return ResponseEntity.status(500)
                 .body(Map.of("error", "Server error occurred: " + e.getMessage()));
         }

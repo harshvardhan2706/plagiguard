@@ -93,8 +93,10 @@ public class AdminDocumentController {
                     docMap.put("id", doc.getId());
                     docMap.put("fileName", doc.getOriginalFilename() != null ? doc.getOriginalFilename() : doc.getFilename());
                     docMap.put("userEmail", doc.getUser().getEmail());
-                    docMap.put("uploadDate", doc.getUploadDate().toString());
-                    docMap.put("aiScore", Math.round(doc.getSimilarityScore() * 100));
+                    // Always return ISO 8601 string or null
+                    docMap.put("uploadDate", doc.getUploadDate() != null ? doc.getUploadDate().toString() : null);
+                    // Return AI Content % as float (0-100), not rounded
+                    docMap.put("aiScore", doc.getSimilarityScore() != null ? doc.getSimilarityScore() * 100 : null);
                     return docMap;
                 })
                 .collect(Collectors.toList());
@@ -111,14 +113,8 @@ public class AdminDocumentController {
         try {
             Upload upload = uploadRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Document not found"));
-            
-            // Delete the physical file
-            String filePath = fileUploadService.getUploadPath() + "/" + upload.getFilename();
-            fileUploadService.deleteFile(filePath);
-            
-            // Delete the database record
+            // Only delete the database record (file is in DB)
             uploadRepository.deleteById(id);
-            
             return ResponseEntity.ok(Map.of("message", "Document deleted successfully"));
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
@@ -131,19 +127,17 @@ public class AdminDocumentController {
         try {
             Upload upload = uploadRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Document not found"));
-            
-            String filePath = fileUploadService.getUploadPath() + "/" + upload.getFilename();
-            Resource resource = fileUploadService.loadFileAsResource(filePath);
-            
-            String contentType = "application/octet-stream";
+            byte[] fileData = upload.getFileData();
+            if (fileData == null || fileData.length == 0) {
+                return ResponseEntity.status(404).body(Map.of("error", "File data not found in database"));
+            }
             String fileName = upload.getOriginalFilename() != null ? upload.getOriginalFilename() : upload.getFilename();
+            String contentType = "application/octet-stream";
             String headerValue = "attachment; filename=\"" + fileName + "\"";
-            
             return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(contentType))
                 .header(HttpHeaders.CONTENT_DISPOSITION, headerValue)
-                .body(resource);
-                
+                .body(fileData);
         } catch (Exception e) {
             return ResponseEntity.internalServerError()
                 .body(Map.of("error", "Failed to download document: " + e.getMessage()));
