@@ -19,7 +19,7 @@ def query_huggingface(text):
     try:
         result = client.fill_mask(
             text,
-            model="distilbert-base-uncased",
+            model="bert-base-uncased",
         )
         return result
     except Exception as e:
