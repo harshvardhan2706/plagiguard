@@ -18,10 +18,8 @@ client = InferenceClient(
 def query_huggingface(source_sentence, sentences):
     try:
         result = client.sentence_similarity(
-            {
-                "source_sentence": source_sentence,
-                "sentences": sentences
-            },
+            source_sentence,
+            sentences,
             model="sentence-transformers/all-MiniLM-L6-v2",
         )
         return result
