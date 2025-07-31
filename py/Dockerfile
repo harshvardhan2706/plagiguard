@@ -10,4 +10,4 @@ RUN apt-get update && apt-get install -y python3-distutils gcc \
 
 COPY . .
 EXPOSE 5000
-CMD ["python", "ai_detector/app.py"]
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "ai_detector.app:app"]
