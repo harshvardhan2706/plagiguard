@@ -1,20 +1,29 @@
 import os
-import requests
+from huggingface_hub import InferenceClient
 from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-HF_API_TOKEN = os.environ.get("HF_API_TOKEN")  # Set this in Railway environment variables
-API_URL = "https://api-inference.huggingface.co/models/distilbert-base-uncased"
 
-headers = {"Authorization": f"Bearer {HF_API_TOKEN}"}
+# Use HF_TOKEN as the environment variable name
+HF_TOKEN = os.environ.get("HF_TOKEN")  # Set this in Railway environment variables
+client = InferenceClient(
+    provider="hf-inference",
+    api_key=HF_TOKEN,
+)
 
+
+# Use fill-mask pipeline for demonstration (adjust as needed for your use case)
 def query_huggingface(text):
-    response = requests.post(API_URL, headers=headers, json={"inputs": text})
-    if response.status_code == 200:
-        return response.json()
-    else:
-        raise Exception(f"Hugging Face API error: {response.text}")
+    # The model must support fill-mask (e.g., distilbert-base-uncased)
+    try:
+        result = client.fill_mask(
+            text,
+            model="distilbert-base-uncased",
+        )
+        return result
+    except Exception as e:
+        raise Exception(f"Hugging Face Hub error: {str(e)}")
 
 @app.route('/analyze', methods=['POST'])
 def analyze():
