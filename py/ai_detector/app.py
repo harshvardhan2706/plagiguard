@@ -1,41 +1,35 @@
 import os
-from huggingface_hub import InferenceClient
 from flask import Flask, request, jsonify
+from sentence_transformers import CrossEncoder
+
 
 app = Flask(__name__)
 
-
-# Use HF_TOKEN as the environment variable name
-HF_TOKEN = os.environ.get("HF_TOKEN")  # Set this in Railway environment variables
-client = InferenceClient(
-    provider="hf-inference",
-    api_key=HF_TOKEN,
-)
+# Load CrossEncoder model at startup
+cross_encoder_model = CrossEncoder("cross-encoder/stsb-roberta-base")
 
 
 
-# Use sentence-similarity pipeline
-def query_huggingface(source_sentence, sentences):
+# Passage ranking using CrossEncoder
+def rank_passages(query, passages):
     try:
-        result = client.sentence_similarity(
-            source_sentence,
-            sentences,
-            model="sentence-transformers/all-MiniLM-L6-v2",
-        )
-        return result
+        scores = cross_encoder_model.predict([(query, passage) for passage in passages])
+        return scores.tolist() if hasattr(scores, 'tolist') else list(scores)
     except Exception as e:
-        raise Exception(f"Hugging Face Hub error: {str(e)}")
+        raise Exception(f"CrossEncoder error: {str(e)}")
 
-@app.route('/analyze', methods=['POST'])
-def analyze():
+
+# New endpoint for passage ranking
+@app.route('/rank', methods=['POST'])
+def rank():
     data = request.get_json()
-    source_sentence = data.get('source_sentence', '')
-    sentences = data.get('sentences', [])
-    if not source_sentence or not sentences:
-        return jsonify({'error': 'source_sentence and sentences are required'}), 400
+    query = data.get('query', '')
+    passages = data.get('passages', [])
+    if not query or not passages:
+        return jsonify({'error': 'query and passages are required'}), 400
     try:
-        result = query_huggingface(source_sentence, sentences)
-        return jsonify({'result': result})
+        scores = rank_passages(query, passages)
+        return jsonify({'scores': scores})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
