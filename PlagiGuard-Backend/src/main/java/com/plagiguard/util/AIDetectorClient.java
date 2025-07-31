@@ -20,12 +20,12 @@ public class AIDetectorClient {
     private static final int RETRY_DELAY_MS = 2000;
     
     // Set the AI microservice URL as a constant for deployment
-    private final String AI_API_URL = "http://127.0.0.1:5000";
+    private final String AI_API_URL = "http://0.0.0.0:5000/";
     private final String aiDetectorUrl;
     private final RestTemplate restTemplate;
     
     public AIDetectorClient(
-        @Value("${ai.detector.url:http://localhost:5000}") String aiDetectorUrl,
+        @Value("${ai.detector.url:http://0.0.0.0:5000/}") String aiDetectorUrl,
         RestTemplate restTemplate
     ) {
         // Use the constant if not running locally
