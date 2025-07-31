@@ -1,0 +1,90 @@
+/* Auth pages shared styles */
+.auth-container {
+  min-height: 100vh;
+  background-color: #f8f9fa;
+}
+
+.auth-card {
+  border: none;
+  border-radius: 1rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.auth-card .card-body {
+  padding: 2.5rem;
+}
+
+.form-floating > .form-control {
+  height: calc(3.5rem + 2px);
+  padding: 1rem 0.75rem;
+}
+
+.form-floating > .form-control:focus {
+  border-color: #0D6EFD;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.btn-primary {
+  background-color: #0D6EFD;
+  border-color: #0D6EFD;
+  padding: 0.75rem 1.5rem;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-primary:hover {
+  background-color: #0b5ed7;
+  border-color: #0a58ca;
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.alert {
+  border-radius: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.auth-divider {
+  position: relative;
+  text-align: center;
+  margin: 1.5rem 0;
+}
+
+.auth-divider::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: #dee2e6;
+}
+
+.auth-divider span {
+  position: relative;
+  background-color: #fff;
+  padding: 0 1rem;
+  color: #6c757d;
+}
+
+/* Links styling */
+.auth-link {
+  color: #0D6EFD;
+  text-decoration: none;
+  transition: color 0.2s ease-in-out;
+}
+
+.auth-link:hover {
+  color: #0a58ca;
+  text-decoration: underline;
+}
+
+/* Spinner styling */
+.spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+  border-width: 0.2em;
+}
