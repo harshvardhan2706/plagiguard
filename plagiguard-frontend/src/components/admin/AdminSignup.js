@@ -172,19 +172,12 @@ function AdminSignup() {
                 )}
               </button>
 
-              <div className="text-center">
-                <p className="mb-0">
-                  Already have an account?{' '}
-                  <Link to="/admin/login" className="text-primary text-decoration-none">
-                    Sign in here
-                  </Link>
-                </p>
-              </div>
+
 
               <div className="text-center mt-3">
-                <Link to="/" className="text-muted text-decoration-none">
+                <Link to="/admin/login" className="text-muted text-decoration-none">
                   <i className="bi bi-arrow-left me-1"></i>
-                  Back to Home
+                  Back to Admin Page
                 </Link>
               </div>
             </form>
