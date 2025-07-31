@@ -20,7 +20,7 @@ public class AIDetectorClient {
     private static final int RETRY_DELAY_MS = 2000;
     
     // Set the AI microservice URL as a constant for deployment
-    private final String AI_API_URL = "http://0.0.0.0:5000";
+    private final String AI_API_URL = "https://plagiguard-production.up.railway.app";
     private final String aiDetectorUrl;
     private final RestTemplate restTemplate;
     
