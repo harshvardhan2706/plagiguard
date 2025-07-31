@@ -11,7 +11,9 @@ public class WebConfig implements WebMvcConfigurer {    @Override
                 .allowedOrigins(
                       "https://plagiguard.onrender.com",
                          "https://plagiguard-backend.onrender.com",
-                         "https://plagiguard.vercel.app"
+                         "https://plagiguard.vercel.app",
+                         "http://10.250.12.185:5000/",
+                         "http://127.0.0.1:5000/"
 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
                 .allowedHeaders(
