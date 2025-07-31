@@ -13,13 +13,16 @@ client = InferenceClient(
 )
 
 
-# Use fill-mask pipeline for demonstration (adjust as needed for your use case)
-def query_huggingface(text):
-    # The model must support fill-mask (e.g., distilbert-base-uncased)
+
+# Use sentence-similarity pipeline
+def query_huggingface(source_sentence, sentences):
     try:
-        result = client.fill_mask(
-            text,
-            model="bert-base-uncased",
+        result = client.sentence_similarity(
+            {
+                "source_sentence": source_sentence,
+                "sentences": sentences
+            },
+            model="sentence-transformers/all-MiniLM-L6-v2",
         )
         return result
     except Exception as e:
@@ -28,11 +31,12 @@ def query_huggingface(text):
 @app.route('/analyze', methods=['POST'])
 def analyze():
     data = request.get_json()
-    text = data.get('text', '')
-    if not text:
-        return jsonify({'error': 'No text provided'}), 400
+    source_sentence = data.get('source_sentence', '')
+    sentences = data.get('sentences', [])
+    if not source_sentence or not sentences:
+        return jsonify({'error': 'source_sentence and sentences are required'}), 400
     try:
-        result = query_huggingface(text)
+        result = query_huggingface(source_sentence, sentences)
         return jsonify({'result': result})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
