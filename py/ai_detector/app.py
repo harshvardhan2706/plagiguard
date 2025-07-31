@@ -1,37 +1,72 @@
 import os
 from flask import Flask, request, jsonify
-from sentence_transformers import CrossEncoder
+from sentence_transformers import SentenceTransformer, util
+from openai import OpenAI
+
 
 
 app = Flask(__name__)
 
-# Load CrossEncoder model at startup
-cross_encoder_model = CrossEncoder("cross-encoder/stsb-roberta-base")
+
+# Load SentenceTransformer model at startup
+similarity_model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
+
+# Set up OpenAI client for Hugging Face router
+HF_TOKEN = os.environ.get("HF_TOKEN")
+openai_client = OpenAI(
+    base_url="https://router.huggingface.co/v1",
+    api_key=HF_TOKEN,
+)
 
 
 
-# Passage ranking using CrossEncoder
-def rank_passages(query, passages):
+
+# Semantic similarity using SentenceTransformer
+def compute_similarity(sentences1, sentences2):
     try:
-        scores = cross_encoder_model.predict([(query, passage) for passage in passages])
-        return scores.tolist() if hasattr(scores, 'tolist') else list(scores)
+        embeddings1 = similarity_model.encode(sentences1, convert_to_tensor=True)
+        embeddings2 = similarity_model.encode(sentences2, convert_to_tensor=True)
+        cosine_scores = util.cos_sim(embeddings1, embeddings2)
+        # Return as nested lists for JSON serialization
+        return cosine_scores.cpu().tolist()
     except Exception as e:
-        raise Exception(f"CrossEncoder error: {str(e)}")
+        raise Exception(f"Similarity error: {str(e)}")
 
 
-# New endpoint for passage ranking
-@app.route('/rank', methods=['POST'])
-def rank():
+
+# New endpoint for semantic similarity
+@app.route('/similarity', methods=['POST'])
+def similarity():
     data = request.get_json()
-    query = data.get('query', '')
-    passages = data.get('passages', [])
-    if not query or not passages:
-        return jsonify({'error': 'query and passages are required'}), 400
+    sentences1 = data.get('sentences1', [])
+    sentences2 = data.get('sentences2', [])
+    if not sentences1 or not sentences2:
+        return jsonify({'error': 'sentences1 and sentences2 are required'}), 400
     try:
-        scores = rank_passages(query, passages)
+        scores = compute_similarity(sentences1, sentences2)
         return jsonify({'scores': scores})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
+
+
+# New endpoint for chat completion using Kimi-K2-Instruct
+@app.route('/chat', methods=['POST'])
+def chat():
+    data = request.get_json()
+    user_message = data.get('message', '')
+    if not user_message:
+        return jsonify({'error': 'message is required'}), 400
+    try:
+        completion = openai_client.chat.completions.create(
+            model="moonshotai/Kimi-K2-Instruct:novita",
+            messages=[
+                {"role": "user", "content": user_message}
+            ],
+        )
+        reply = completion.choices[0].message.content if completion.choices and completion.choices[0].message else ""
+        return jsonify({'reply': reply})
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
