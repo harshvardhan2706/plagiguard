@@ -23,14 +23,16 @@ services:
       - postgres
       - redis
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/plagiguard
+      - SPRING_DATASOURCE_URL=jdbc:mysql://databasehvg.c1ca4886o89p.eu-north-1.rds.amazonaws.com:3306/plagiguard
       - SPRING_REDIS_HOST=redis
       - AI_SERVICE_URL=http://ai-service:5000
       - SPRING_PROFILES_ACTIVE=prod
+      - dbuname=hvardhan
+      - dbpwd=Mat2yp8rz1
 
   ai-service:
     build:
-      context: ./PlagiGuard-Backend/py
+      context: ./py/ai_detector
       dockerfile: Dockerfile
     ports:
       - "5000:5000"
@@ -39,17 +41,6 @@ services:
       - PYTORCH_DEVICE=cpu
     volumes:
       - ./models:/app/models
-
-  postgres:
-    image: postgres:15
-    ports:
-      - "5432:5432"
-    environment:
-      - POSTGRES_DB=plagiguard
-      - POSTGRES_USER=plagiguard
-      - POSTGRES_PASSWORD=securepassword
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
 
   redis:
     image: redis:6

@@ -19,6 +19,8 @@ public class AIDetectorClient {
     private static final int MAX_RETRIES = 3;
     private static final int RETRY_DELAY_MS = 2000;
     
+    // Set the AI microservice URL as a constant for deployment
+    private final String AI_API_URL = "https://your-ai-service-url";
     private final String aiDetectorUrl;
     private final RestTemplate restTemplate;
     
@@ -26,7 +28,12 @@ public class AIDetectorClient {
         @Value("${ai.detector.url:http://localhost:5000}") String aiDetectorUrl,
         RestTemplate restTemplate
     ) {
-        this.aiDetectorUrl = aiDetectorUrl + "/detect";
+        // Use the constant if not running locally
+        if ("https://your-ai-service-url".startsWith("http")) {
+            this.aiDetectorUrl = AI_API_URL + "/detect";
+        } else {
+            this.aiDetectorUrl = aiDetectorUrl + "/detect";
+        }
         this.restTemplate = restTemplate;
     }
     
