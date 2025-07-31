@@ -1,0 +1,19 @@
+version: '3.8'
+services:
+
+  backend:
+    build:
+      context: ./PlagiGuard-Backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://databasehvg.c1ca4886o89p.eu-north-1.rds.amazonaws.com:3306/plagiguard
+      - SPRING_REDIS_HOST=redis
+      - AI_SERVICE_URL=http://ai-service:5000
+      - SPRING_PROFILES_ACTIVE=prod
+      - dbuname=hvardhan
+      - dbpwd=Mat2yp8rz1
