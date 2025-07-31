@@ -7,8 +7,8 @@ from sentence_transformers import SentenceTransformer, util
 app = Flask(__name__)
 
 
-# Load SentenceTransformer model at startup
-similarity_model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
+# Load lightweight SentenceTransformer model for plagiarism detection
+similarity_model = SentenceTransformer("sentence-transformers/paraphrase-MiniLM-L6-v2")
 
 # Set up OpenAI client for Hugging Face router
 HF_TOKEN = os.environ.get("HF_TOKEN")

@@ -2,4 +2,4 @@ flask==3.0.0
 gunicorn==21.0.0
 torch==2.0.1+cpu
 --extra-index-url https://download.pytorch.org/whl/cpu
-sentence-transformers
+sentence-transformers  # for paraphrase-MiniLM-L6-v2
