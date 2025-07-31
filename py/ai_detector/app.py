@@ -43,7 +43,7 @@ def load_model_with_retry():
             time.sleep(RETRY_DELAY)
 
 # Load the model and tokenizer
-MODEL_NAME = "distilbert-base-uncased-finetuned-sst-2-english"  # Example DistilBERT model; replace with your fine-tuned model if available
+MODEL_NAME = "distilbert-base-uncased"  # Lighter DistilBERT model for smaller image size
 try:
     tokenizer, model = load_model_with_retry()
 except Exception as e:
