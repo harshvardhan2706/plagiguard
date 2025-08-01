@@ -10,7 +10,6 @@ public class WebConfig implements WebMvcConfigurer {    @Override
         registry.addMapping("/**")
                 .allowedOrigins(
                          "https://plagiguard-backend.onrender.com",
-                         "https://plagiguard.onrender.com",
                          "https://plagiguard.vercel.app"
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
