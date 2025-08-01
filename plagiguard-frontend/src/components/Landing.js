@@ -5,6 +5,13 @@ import logo from '../logo/plagiguard.png';
 function Landing() {
   return (
     <div>
+      {/* Project Alert */}
+      <div className="alert alert-info mb-0 rounded-0 text-center shadow-sm" role="alert" style={{fontSize: '1.1rem', borderBottom: '2px solid #0d6efd'}}>
+        <span style={{fontWeight: 600}}>About PlagiGuard:</span> PlagiGuard is an open-source AI-powered platform for detecting AI-generated and plagiarized content.<br/>
+        <span style={{color: '#dc3545', fontWeight: 600}}>
+          Notice: The system may require up to 5 minutes to fully activate after periods of inactivity. Please allow a few moments for your first request to process.
+        </span>
+      </div>
       {/* Hero Section */}
       <section className="bg-primary text-white py-5">
         <div className="container">

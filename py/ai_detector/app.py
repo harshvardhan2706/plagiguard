@@ -1,71 +1,32 @@
 import os
+import requests
 from flask import Flask, request, jsonify
-from sentence_transformers import SentenceTransformer, util
-
-
 
 app = Flask(__name__)
 
+HF_API_TOKEN = os.environ.get("HF_API_TOKEN")  # Set this in Railway environment variables
+API_URL = "https://api-inference.huggingface.co/models/distilbert-base-uncased"
 
-# Load lightweight SentenceTransformer model for plagiarism detection
-similarity_model = SentenceTransformer("sentence-transformers/paraphrase-MiniLM-L6-v2")
+headers = {"Authorization": f"Bearer {HF_API_TOKEN}"}
 
-# Set up OpenAI client for Hugging Face router
-HF_TOKEN = os.environ.get("HF_TOKEN")
-openai_client = OpenAI(
-    base_url="https://router.huggingface.co/v1",
-    api_key=HF_TOKEN,
-)
+def query_huggingface(text):
+    response = requests.post(API_URL, headers=headers, json={"inputs": text})
+    if response.status_code == 200:
+        return response.json()
+    else:
+        raise Exception(f"Hugging Face API error: {response.text}")
 
-
-
-
-# Semantic similarity using SentenceTransformer
-def compute_similarity(sentences1, sentences2):
-    try:
-        embeddings1 = similarity_model.encode(sentences1, convert_to_tensor=True)
-        embeddings2 = similarity_model.encode(sentences2, convert_to_tensor=True)
-        cosine_scores = util.cos_sim(embeddings1, embeddings2)
-        # Return as nested lists for JSON serialization
-        return cosine_scores.cpu().tolist()
-    except Exception as e:
-        raise Exception(f"Similarity error: {str(e)}")
-
-
-
-# New endpoint for semantic similarity
-@app.route('/similarity', methods=['POST'])
-def similarity():
+@app.route('/analyze', methods=['POST'])
+def analyze():
     data = request.get_json()
-    sentences1 = data.get('sentences1', [])
-    sentences2 = data.get('sentences2', [])
-    if not sentences1 or not sentences2:
-        return jsonify({'error': 'sentences1 and sentences2 are required'}), 400
+    text = data.get('text', '')
+    if not text:
+        return jsonify({'error': 'No text provided'}), 400
     try:
-        scores = compute_similarity(sentences1, sentences2)
-        return jsonify({'scores': scores})
+        result = query_huggingface(text)
+        return jsonify({'result': result})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
-
-
-# New endpoint for chat completion using Kimi-K2-Instruct
-@app.route('/chat', methods=['POST'])
-def chat():
-    data = request.get_json()
-    user_message = data.get('message', '')
-    if not user_message:
-        return jsonify({'error': 'message is required'}), 400
-    try:
-        completion = openai_client.chat.completions.create(
-            model="moonshotai/Kimi-K2-Instruct:novita",
-            messages=[
-                {"role": "user", "content": user_message}
-            ],
-        )
-        reply = completion.choices[0].message.content if completion.choices and completion.choices[0].message else ""
-        return jsonify({'reply': reply})
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
