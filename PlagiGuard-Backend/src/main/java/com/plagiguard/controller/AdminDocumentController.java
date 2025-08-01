@@ -24,7 +24,7 @@ import com.plagiguard.service.FileUploadService;
 
 @RestController
 @RequestMapping("/api/admin/documents")
-@CrossOrigin(origins = {"http://localhost:3000"})
+// @CrossOrigin(origins = {"http://localhost:3000"})
 public class AdminDocumentController {
 
     @Autowired
