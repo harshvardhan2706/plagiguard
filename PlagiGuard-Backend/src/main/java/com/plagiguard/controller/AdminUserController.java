@@ -21,7 +21,7 @@ import com.plagiguard.entity.User;
 import com.plagiguard.repository.UserRepository;
 
 @RestController
-@RequestMapping("https://plagiguard-backend.onrender.com/api/admin/users")
+@RequestMapping("/api/admin/users")
 // @CrossOrigin(origins = {"http://localhost:3000"})
 public class AdminUserController {
 

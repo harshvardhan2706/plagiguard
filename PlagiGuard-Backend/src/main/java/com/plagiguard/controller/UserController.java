@@ -25,7 +25,7 @@ import com.plagiguard.service.EmailService;
 import com.plagiguard.service.JwtService;
 
 @RestController
-@RequestMapping("https://plagiguard-backend.onrender.com/api/users")
+@RequestMapping("/api/users")
 public class UserController {
 
     @Autowired
@@ -41,7 +41,7 @@ public class UserController {
     @Autowired
     private JwtService jwtService;
 
-    @PostMapping("https://plagiguard-backend.onrender.com/register")
+    @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user) {
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             return ResponseEntity
@@ -149,7 +149,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("https://plagiguard-backend.onrender.com/forgot-password")
+    @PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> request) {
         String email = request.get("email");
         Optional<User> userOpt = userRepository.findByEmail(email);
@@ -178,7 +178,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("https://plagiguard-backend.onrender.com/reset-password")
+    @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request) {
         String token = request.get("token");
         String newPassword = request.get("password");
@@ -202,7 +202,7 @@ public class UserController {
         return ResponseEntity.ok(Map.of("message", "Password reset successful"));
     }
 
-    @PutMapping("https://plagiguard-backend.onrender.com/profile")
+    @PutMapping("/profile")
     public ResponseEntity<?> updateProfile(@RequestBody Map<String, String> request) {        String userIdStr = request.get("userId");
         if (userIdStr == null) {
             return ResponseEntity.badRequest()
@@ -264,7 +264,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("https://plagiguard-backend.onrender.com/auth-status")
+    @GetMapping("/auth-status")
     public ResponseEntity<?> checkAuthStatus() {
         return ResponseEntity.ok(Map.of("message", "Authenticated"));
     }

@@ -175,7 +175,7 @@ function AdminSignup() {
 
 
               <div className="text-center mt-3">
-                <Link to="/admin/login" className="text-muted text-decoration-none">
+                <Link to="/admin/AdminDashboard" className="text-muted text-decoration-none">
                   <i className="bi bi-arrow-left me-1"></i>
                   Back to Admin Page
                 </Link>

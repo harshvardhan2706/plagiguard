@@ -27,7 +27,7 @@ import com.plagiguard.service.FileUploadService;
 import jakarta.persistence.EntityNotFoundException;
 
 @RestController
-@RequestMapping("https://plagiguard-backend.onrender.com/api/files")
+@RequestMapping("/api/files")
 // @CrossOrigin(origins = {"*"}, allowCredentials = "true")
 public class FileUploadController {
     

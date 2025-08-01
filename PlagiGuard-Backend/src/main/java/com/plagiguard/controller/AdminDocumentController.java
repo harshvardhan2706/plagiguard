@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +21,7 @@ import com.plagiguard.repository.UploadRepository;
 import com.plagiguard.service.FileUploadService;
 
 @RestController
-@RequestMapping("https://plagiguard-backend.onrender.com/api/admin/documents")
+@RequestMapping("/api/admin/documents")
 // @CrossOrigin(origins = {"http://localhost:3000"})
 public class AdminDocumentController {
 
