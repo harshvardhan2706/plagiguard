@@ -15,7 +15,7 @@ import com.plagiguard.repository.UploadRepository;
 import com.plagiguard.repository.UserRepository;
 
 @RestController
-@RequestMapping("/api/admin/dashboard")
+@RequestMapping("https://plagiguard-backend.onrender.com/api/admin/dashboard")
 // @CrossOrigin(origins = {"http://localhost:3000"})
 public class AdminDashboardController {
 

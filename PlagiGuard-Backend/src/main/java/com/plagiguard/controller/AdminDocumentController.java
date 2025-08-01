@@ -23,7 +23,7 @@ import com.plagiguard.repository.UploadRepository;
 import com.plagiguard.service.FileUploadService;
 
 @RestController
-@RequestMapping("/api/admin/documents")
+@RequestMapping("https://plagiguard-backend.onrender.com/api/admin/documents")
 // @CrossOrigin(origins = {"http://localhost:3000"})
 public class AdminDocumentController {
 

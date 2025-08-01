@@ -22,7 +22,7 @@ import com.plagiguard.repository.UploadRepository;
 import com.plagiguard.repository.UserRepository;
 
 @RestController
-@RequestMapping("/api/admin/analytics")
+@RequestMapping("https://plagiguard-backend.onrender.com/api/admin/analytics")
 // @CrossOrigin(origins = {"http://localhost:3000"})
 public class AnalyticsController {
 

@@ -26,7 +26,7 @@ import com.plagiguard.service.EmailService;
 import com.plagiguard.service.JwtService;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("https://plagiguard-backend.onrender.com/api/users")
 public class UserController {
 
     @Autowired

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("https://plagiguard-backend.onrender.com/api")
 public class DBCheckController {
     private static final Logger logger = LoggerFactory.getLogger(DBCheckController.class);
 

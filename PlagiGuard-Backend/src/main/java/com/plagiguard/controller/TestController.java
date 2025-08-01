@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/test")
+@RequestMapping("https://plagiguard-backend.onrender.com/api/test")
 public class TestController {
     
     @GetMapping("/auth")    public ResponseEntity<String> testAuth() {
