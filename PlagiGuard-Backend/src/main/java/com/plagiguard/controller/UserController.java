@@ -27,7 +27,6 @@ import com.plagiguard.service.JwtService;
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin(origins = {"http://localhost:3000"})
 public class UserController {
 
     @Autowired

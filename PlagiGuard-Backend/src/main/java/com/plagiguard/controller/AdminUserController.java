@@ -23,7 +23,7 @@ import com.plagiguard.repository.UserRepository;
 
 @RestController
 @RequestMapping("/api/admin/users")
-@CrossOrigin(origins = {"http://localhost:3000"})
+// @CrossOrigin(origins = {"http://localhost:3000"})
 public class AdminUserController {
 
     @Autowired

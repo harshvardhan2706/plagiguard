@@ -28,7 +28,7 @@ import com.plagiguard.service.JwtService;
 
 @RestController
 @RequestMapping("/api/admin")
-@CrossOrigin(origins = {"http://localhost:3000"})
+// @CrossOrigin(origins = {"http://localhost:3000"})
 public class AdminController {    private static final Logger LOGGER = LoggerFactory.getLogger(AdminController.class);
 
     @Autowired

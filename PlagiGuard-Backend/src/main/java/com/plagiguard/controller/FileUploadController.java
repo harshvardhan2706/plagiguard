@@ -28,7 +28,7 @@ import jakarta.persistence.EntityNotFoundException;
 
 @RestController
 @RequestMapping("/api/files")
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001", "http://localhost:3002"}, allowCredentials = "true")
+@CrossOrigin(origins = {"*"}, allowCredentials = "true")
 public class FileUploadController {
     
     @Autowired
