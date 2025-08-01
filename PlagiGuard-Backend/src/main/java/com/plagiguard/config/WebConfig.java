@@ -9,7 +9,6 @@ public class WebConfig implements WebMvcConfigurer {    @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOrigins(
-                         "https://plagiguard-backend.onrender.com",
                          "https://plagiguard.vercel.app"
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")
