@@ -4,14 +4,12 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-HF_API_TOKEN = os.environ.get("HF_API_TOKEN")  # Set this in Railway environment variables
-# API_URL = "https://api-inference.huggingface.co/models/distilbert-base-uncased"
-API_URL = "https://api-inference.huggingface.co/models/jpwahle/longformer-base-plagiarism-detection"
-
+HF_API_TOKEN = os.environ.get("HF_API_TOKEN")
+API_URL = "https://api-inference.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2"
 headers = {"Authorization": f"Bearer {HF_API_TOKEN}"}
 
-def query_huggingface(text):
-    response = requests.post(API_URL, headers=headers, json={"inputs": text})
+def query_huggingface(sentences):
+    response = requests.post(API_URL, headers=headers, json={"inputs": sentences})
     if response.status_code == 200:
         return response.json()
     else:
@@ -20,12 +18,17 @@ def query_huggingface(text):
 @app.route('/analyze', methods=['POST'])
 def analyze():
     data = request.get_json()
-    text = data.get('text', '')
-    if not text:
-        return jsonify({'error': 'No text provided'}), 400
+    text1 = data.get('text1', '')
+    text2 = data.get('text2', '')
+    if not text1 or not text2:
+        return jsonify({'error': 'Both text1 and text2 are required'}), 400
     try:
-        result = query_huggingface(text)
-        return jsonify({'result': result})
+        embeddings = query_huggingface([text1, text2])
+        # Cosine similarity calculation
+        from numpy import dot
+        from numpy.linalg import norm
+        similarity = dot(embeddings[0], embeddings[1]) / (norm(embeddings[0]) * norm(embeddings[1]))
+        return jsonify({'similarity_score': float(similarity)})
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
