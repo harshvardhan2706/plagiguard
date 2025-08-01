@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -42,7 +41,7 @@ public class UserController {
     @Autowired
     private JwtService jwtService;
 
-    @PostMapping("/register")
+    @PostMapping("https://plagiguard-backend.onrender.com/register")
     public ResponseEntity<?> register(@RequestBody User user) {
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             return ResponseEntity
@@ -50,12 +49,14 @@ public class UserController {
                 .body(Map.of("error", "Email already exists"));
         }
         
-        try {            // Set default role if not provided
+        try {
+            System.out.println("[REGISTER] Incoming registration request: " + user);
             if (user.getRole() == null) {
                 user.setRole("USER");
             }
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             User savedUser = userRepository.save(user);
+            System.out.println("[REGISTER] User saved: " + savedUser.getEmail());
 
             // Generate JWT token
             String token = jwtService.generateToken(savedUser.getEmail(), savedUser.getRole());
@@ -66,9 +67,12 @@ public class UserController {
             response.put("fullName", savedUser.getFullName());
             response.put("role", savedUser.getRole());
             response.put("token", token);
+            System.out.println("[REGISTER] Registration successful for: " + savedUser.getEmail());
 
             return ResponseEntity.ok(response);
         } catch (Exception e) {
+            System.err.println("[REGISTER] Registration failed: " + e.getMessage());
+            e.printStackTrace();
             return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(Map.of("error", "Failed to register user"));
@@ -145,7 +149,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/forgot-password")
+    @PostMapping("https://plagiguard-backend.onrender.com/forgot-password")
     public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> request) {
         String email = request.get("email");
         Optional<User> userOpt = userRepository.findByEmail(email);
@@ -174,7 +178,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/reset-password")
+    @PostMapping("https://plagiguard-backend.onrender.com/reset-password")
     public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request) {
         String token = request.get("token");
         String newPassword = request.get("password");
@@ -198,7 +202,7 @@ public class UserController {
         return ResponseEntity.ok(Map.of("message", "Password reset successful"));
     }
 
-    @PutMapping("/profile")
+    @PutMapping("https://plagiguard-backend.onrender.com/profile")
     public ResponseEntity<?> updateProfile(@RequestBody Map<String, String> request) {        String userIdStr = request.get("userId");
         if (userIdStr == null) {
             return ResponseEntity.badRequest()
@@ -260,7 +264,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/auth-status")
+    @GetMapping("https://plagiguard-backend.onrender.com/auth-status")
     public ResponseEntity<?> checkAuthStatus() {
         return ResponseEntity.ok(Map.of("message", "Authenticated"));
     }
