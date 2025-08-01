@@ -25,7 +25,7 @@ public class AIDetectorClient {
     private final RestTemplate restTemplate;
     
     public AIDetectorClient(
-        @Value("${ai.detector.url:http://localhost:5000}") String aiDetectorUrl,
+        @Value("${ai.detector.url:https://plagiguard-production.up.railway.app}") String aiDetectorUrl,
         RestTemplate restTemplate
     ) {
         // Use the constant if not running locally

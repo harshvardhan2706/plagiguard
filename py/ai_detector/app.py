@@ -5,7 +5,8 @@ from flask import Flask, request, jsonify
 app = Flask(__name__)
 
 HF_API_TOKEN = os.environ.get("HF_API_TOKEN")  # Set this in Railway environment variables
-API_URL = "https://api-inference.huggingface.co/models/distilbert-base-uncased"
+# API_URL = "https://api-inference.huggingface.co/models/distilbert-base-uncased"
+API_URL = "https://api-inference.huggingface.co/models/jpwahle/longformer-base-plagiarism-detection"
 
 headers = {"Authorization": f"Bearer {HF_API_TOKEN}"}
 
