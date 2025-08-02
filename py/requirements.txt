@@ -1,7 +1,5 @@
 flask==3.0.0
-gunicorn==21.0.0
-torch==2.1.2+cpu
---extra-index-url https://download.pytorch.org/whl/cpu
-sentence-transformers  # for paraphrase-MiniLM-L6-v2
-requests
-numpy
+transformers==4.36.0
+torch==2.1.0
+numpy==1.24.3
+scikit-learn==1.3.0

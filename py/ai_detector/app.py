@@ -1,36 +1,101 @@
-import os
-import requests
 from flask import Flask, request, jsonify
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
+import torch
+import numpy as np
+import time
+from functools import wraps
+
+# Configuration
+MAX_RETRIES = 3
+RETRY_DELAY = 1  # seconds
+REQUEST_TIMEOUT = 30  # seconds
 
 app = Flask(__name__)
 
-HF_API_TOKEN = os.environ.get("HF_API_TOKEN")
-API_URL = "https://api-inference.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2"
-headers = {"Authorization": f"Bearer {HF_API_TOKEN}"}
+def retry_on_failure(max_retries=MAX_RETRIES, delay=RETRY_DELAY):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            last_error = None
+            for attempt in range(max_retries):
+                try:
+                    return func(*args, **kwargs)
+                except Exception as e:
+                    last_error = str(e)
+                    if attempt < max_retries - 1:  # Don't sleep on last attempt
+                        time.sleep(delay)
+            raise Exception(f"Failed after {max_retries} attempts. Last error: {last_error}")
+        return wrapper
+    return decorator
 
-def query_huggingface(sentences):
-    response = requests.post(API_URL, headers=headers, json={"inputs": sentences})
-    if response.status_code == 200:
-        return response.json()
-    else:
-        raise Exception(f"Hugging Face API error: {response.text}")
+def load_model_with_retry():
+    for attempt in range(MAX_RETRIES):
+        try:
+            print(f"Attempting to load model (attempt {attempt + 1}/{MAX_RETRIES})...")
+            tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+            model = AutoModelForSequenceClassification.from_pretrained(MODEL_NAME)
+            print("Model loaded successfully!")
+            return tokenizer, model
+        except Exception as e:
+            if attempt == MAX_RETRIES - 1:
+                raise Exception(f"Failed to load model after {MAX_RETRIES} attempts: {str(e)}")
+            print(f"Failed to load model (attempt {attempt + 1}): {str(e)}")
+            time.sleep(RETRY_DELAY)
 
-@app.route('/analyze', methods=['POST'])
-def analyze():
-    data = request.get_json()
-    text1 = data.get('text1', '')
-    text2 = data.get('text2', '')
-    if not text1 or not text2:
-        return jsonify({'error': 'Both text1 and text2 are required'}), 400
+# Load the model and tokenizer
+MODEL_NAME = "roberta-base-openai-detector"
+try:
+    tokenizer, model = load_model_with_retry()
+except Exception as e:
+    print(f"Fatal error loading model: {str(e)}")
+    exit(1)
+
+@retry_on_failure()
+def analyze_text(text):
     try:
-        embeddings = query_huggingface([text1, text2])
-        # Cosine similarity calculation
-        from numpy import dot
-        from numpy.linalg import norm
-        similarity = dot(embeddings[0], embeddings[1]) / (norm(embeddings[0]) * norm(embeddings[1]))
-        return jsonify({'similarity_score': float(similarity)})
+        # Tokenize and prepare input
+        inputs = tokenizer(text, return_tensors="pt", truncation=True, max_length=512)
+        
+        # Get model prediction
+        with torch.no_grad():
+            outputs = model(**inputs)
+            probabilities = torch.nn.functional.softmax(outputs.logits, dim=1)
+            ai_score = probabilities[0][1].item()  # Probability of AI-generated text
+        
+        return {
+            "ai_generated": ai_score > 0.7,  # Threshold can be adjusted
+            "ai_score": ai_score,
+            "status": "success"
+        }
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        raise Exception(f"Error analyzing text: {str(e)}")
+
+@app.route('/detect', methods=['POST'])
+def detect():
+    try:
+        data = request.get_json()
+        
+        if not data or 'text' not in data:
+            return jsonify({
+                "error": "Missing 'text' field in request body",
+                "status": "error"
+            }), 400
+            
+        text = data['text']
+        if not isinstance(text, str) or not text.strip():
+            return jsonify({
+                "error": "Text must be a non-empty string",
+                "status": "error"
+            }), 400
+
+        result = analyze_text(text)
+        return jsonify(result)
+
+    except Exception as e:
+        return jsonify({
+            "error": str(e),
+            "status": "error"
+        }), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
