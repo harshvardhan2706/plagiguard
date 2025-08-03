@@ -47,7 +47,8 @@ plagiguard/
 - MySQL/Amazon RDS support
 - Automatic cleanup: uploaded files older than 7 days are deleted
 
-## Getting Started
+
+# Getting Started
 
 ### Prerequisites
 - Docker & Docker Compose
