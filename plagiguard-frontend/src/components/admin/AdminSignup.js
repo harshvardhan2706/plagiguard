@@ -43,8 +43,8 @@ function AdminSignup() {
       });
 
       if (response.data) {
-        alert('Account created successfully! Please login.');
-        navigate('/admin/login');
+        alert('Account created successfully!');
+        navigate('/admin/AdminDashboard');
       }
     } catch (err) {
       console.error('Signup error:', err);
