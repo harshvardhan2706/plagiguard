@@ -8,12 +8,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.plagiguard.entity.Upload;
-import com.plagiguard.entity.User;
+import com.plagiguard.entity.PgUser;
 
 @Repository
 public interface UploadRepository extends JpaRepository<Upload, Long> {
-    List<Upload> findByUser(User user);
-    Upload findByUserAndFilename(User user, String filename);
+    List<Upload> findByUser(PgUser user);
+    Upload findByUserAndFilename(PgUser user, String filename);
     
     long countByUploadDateBetween(LocalDateTime start, LocalDateTime end);
     

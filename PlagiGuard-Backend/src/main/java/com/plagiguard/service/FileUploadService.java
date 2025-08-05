@@ -15,9 +15,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.plagiguard.dto.UploadResultDTO;
 import com.plagiguard.entity.Upload;
-import com.plagiguard.entity.User;
+import com.plagiguard.entity.PgUser;
 import com.plagiguard.repository.UploadRepository;
-import com.plagiguard.repository.UserRepository;
+import com.plagiguard.repository.PgUserRepository;
 import com.plagiguard.util.AIDetectorClient;
 import com.plagiguard.util.FileTextExtractor;
 
@@ -29,7 +29,7 @@ public class FileUploadService {
     private static final Logger logger = LoggerFactory.getLogger(FileUploadService.class);
 
     @Autowired
-    private UserRepository userRepository;
+    private PgUserRepository userRepository;
     @Autowired
     private UploadRepository uploadRepository;
 
@@ -43,7 +43,7 @@ public class FileUploadService {
             }
             
             logger.debug("Processing upload for user ID: {}", userId);
-            User user = userRepository.findById(userId.intValue())
+            PgUser user = userRepository.findById(userId.intValue())
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
             return processUpload(file, user);
         } catch (EntityNotFoundException e) {
@@ -65,7 +65,7 @@ public class FileUploadService {
                 return new UploadResultDTO(false, "Failed to upload empty file", null);
             }
             logger.debug("Processing upload for email: {}", email);
-            User user = userRepository.findByEmail(email)
+            PgUser user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with email: " + email));
             return processUpload(file, user);
         } catch (EntityNotFoundException e) {
@@ -80,7 +80,7 @@ public class FileUploadService {
         }
     }
 
-    private UploadResultDTO processUpload(MultipartFile file, User user) throws Exception {
+    private UploadResultDTO processUpload(MultipartFile file, PgUser user) throws Exception {
 
         String originalFilename = file.getOriginalFilename();
         String uniqueFileName = UUID.randomUUID().toString() + "_" + originalFilename;

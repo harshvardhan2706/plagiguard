@@ -24,14 +24,14 @@ public class PasswordResetToken {
 
     @OneToOne
     @JoinColumn(nullable = false, name = "user_id")
-    private User user;
+    private PgUser user;
 
     @Column(nullable = false)
     private LocalDateTime expiryDate;
 
     public PasswordResetToken() {}
 
-    public PasswordResetToken(String token, User user) {
+    public PasswordResetToken(String token, PgUser user) {
         this.token = token;
         this.user = user;
         this.expiryDate = LocalDateTime.now().plusHours(1); // Token expires in 1 hour
@@ -53,11 +53,11 @@ public class PasswordResetToken {
         this.token = token;
     }
 
-    public User getUser() {
+    public PgUser getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(PgUser user) {
         this.user = user;
     }
 

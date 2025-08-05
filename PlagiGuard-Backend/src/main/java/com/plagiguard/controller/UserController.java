@@ -18,18 +18,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.plagiguard.entity.PasswordResetToken;
-import com.plagiguard.entity.User;
+import com.plagiguard.entity.PgUser;
 import com.plagiguard.repository.PasswordResetTokenRepository;
-import com.plagiguard.repository.UserRepository;
+import com.plagiguard.repository.PgUserRepository;
 import com.plagiguard.service.EmailService;
 import com.plagiguard.service.JwtService;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/pgusers")
 public class UserController {
 
     @Autowired
-    private UserRepository userRepository;
+    private PgUserRepository userRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;    @Autowired
@@ -42,7 +42,7 @@ public class UserController {
     private JwtService jwtService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody User user) {
+    public ResponseEntity<?> register(@RequestBody PgUser user) {
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             return ResponseEntity
                 .status(HttpStatus.CONFLICT)
@@ -55,7 +55,7 @@ public class UserController {
                 user.setRole("USER");
             }
             user.setPassword(passwordEncoder.encode(user.getPassword()));
-            User savedUser = userRepository.save(user);
+            PgUser savedUser = userRepository.save(user);
             System.out.println("[REGISTER] User saved: " + savedUser.getEmail());
 
             // Generate JWT token
@@ -78,18 +78,18 @@ public class UserController {
                 .body(Map.of("error", "Failed to register user"));
         }
     }    @PostMapping("/login")    
-    public ResponseEntity<?> login(@RequestBody User loginUser) {
+    public ResponseEntity<?> login(@RequestBody PgUser loginUser) {
         try {
             System.out.println("Login attempt for email: " + loginUser.getEmail());
             
-            Optional<User> userOpt = userRepository.findByEmail(loginUser.getEmail());
+            Optional<PgUser> userOpt = userRepository.findByEmail(loginUser.getEmail());
             if (userOpt.isEmpty()) {
                 System.out.println("User not found: " + loginUser.getEmail());
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("error", "Invalid credentials"));
             }
 
-            User user = userOpt.get();
+            PgUser user = userOpt.get();
             System.out.println("User found, verifying password...");
             
             if (!passwordEncoder.matches(loginUser.getPassword(), user.getPassword())) {
@@ -152,7 +152,7 @@ public class UserController {
     @PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> request) {
         String email = request.get("email");
-        Optional<User> userOpt = userRepository.findByEmail(email);
+        Optional<PgUser> userOpt = userRepository.findByEmail(email);
         
         if (userOpt.isEmpty()) {
             return ResponseEntity
@@ -160,7 +160,7 @@ public class UserController {
                 .body(Map.of("error", "Email not found"));
         }
 
-        User user = userOpt.get();
+        PgUser user = userOpt.get();
         String token = UUID.randomUUID().toString();
         
         passwordResetTokenRepository.deleteByUser_Id(user.getId());
@@ -192,7 +192,7 @@ public class UserController {
         }
 
         PasswordResetToken resetToken = tokenOpt.get();
-        User user = resetToken.getUser();
+        PgUser user = resetToken.getUser();
         
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
@@ -209,13 +209,13 @@ public class UserController {
                 .body(Map.of("error", "UserId is required"));
         }
 
-        Optional<User> userOpt = userRepository.findById(Integer.valueOf(userIdStr));
+        Optional<PgUser> userOpt = userRepository.findById(Integer.valueOf(userIdStr));
         if (userOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Map.of("error", "User not found"));
         }
 
-        User user = userOpt.get();
+        PgUser user = userOpt.get();
         boolean isUpdated = false;
 
         try {

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.plagiguard.repository.UploadRepository;
-import com.plagiguard.repository.UserRepository;
+import com.plagiguard.repository.PgUserRepository;
 
 @RestController
 @RequestMapping("/api/admin/dashboard")
@@ -22,7 +22,7 @@ public class AdminDashboardController {
     private UploadRepository uploadRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private PgUserRepository userRepository;
 
     public AdminDashboardController() {
     }

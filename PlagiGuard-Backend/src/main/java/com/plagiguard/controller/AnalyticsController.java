@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.plagiguard.entity.Upload;
-import com.plagiguard.entity.User;
+import com.plagiguard.entity.PgUser;
 import com.plagiguard.repository.UploadRepository;
-import com.plagiguard.repository.UserRepository;
+import com.plagiguard.repository.PgUserRepository;
 
 @RestController
 @RequestMapping("/api/admin/analytics")
@@ -29,7 +29,7 @@ public class AnalyticsController {
     private UploadRepository uploadRepository;
 
     @Autowired
-    private UserRepository userRepository;    @GetMapping("")
+    private PgUserRepository userRepository;
     public ResponseEntity<?> getAnalytics() {
         try {
             System.out.println("Analytics endpoint called");
@@ -37,7 +37,7 @@ public class AnalyticsController {
 
             // Get all documents and users
             List<Upload> allUploads = uploadRepository.findAll();
-            List<User> allUsers = userRepository.findAll();
+            List<PgUser> allUsers = userRepository.findAll();
 
             // Document uploads by month
             List<Map<String, Object>> documentsByMonth = getDocumentsByMonth(allUploads);
@@ -83,7 +83,7 @@ public class AnalyticsController {
             .collect(Collectors.toList());
     }
 
-    private List<Map<String, Object>> getUserGrowth(List<User> users) {
+    private List<Map<String, Object>> getUserGrowth(List<PgUser> users) {
         Map<YearMonth, Long> usersByMonth = users.stream()
             .collect(Collectors.groupingBy(
                 user -> YearMonth.from(user.getLastLogin() != null ? user.getLastLogin() : LocalDateTime.now()),

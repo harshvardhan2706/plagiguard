@@ -34,7 +34,7 @@ public class Upload {
     
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private User user;
+    private PgUser user;
     
     @Column(name = "file_data", columnDefinition = "LONGBLOB")
     private byte[] fileData;
@@ -84,11 +84,11 @@ public class Upload {
         this.similarityScore = similarityScore;
     }
 
-    public User getUser() {
+    public PgUser getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(PgUser user) {
         this.user = user;
     }
 

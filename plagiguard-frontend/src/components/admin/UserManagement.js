@@ -27,7 +27,7 @@ function UserManagement() {
 
   const fetchUsers = async () => {
     try {
-      const response = await api.get('/api/admin/users', { params: filters });
+      const response = await api.get('/api/admin/pgusers', { params: filters });
       // Ensure we always have an array, even if the API returns null or undefined
       setUsers(Array.isArray(response.data) ? response.data : []);
     } catch (err) {

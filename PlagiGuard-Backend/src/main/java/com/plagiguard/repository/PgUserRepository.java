@@ -7,10 +7,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.plagiguard.entity.User;
+import com.plagiguard.entity.PgUser;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Integer> {
-    Optional<User> findByEmail(String email);
-    List<User> findByStatus(String status, Sort sort);
+public interface PgUserRepository extends JpaRepository<PgUser, Integer> {
+    Optional<PgUser> findByEmail(String email);
+    List<PgUser> findByStatus(String status, Sort sort);
 }

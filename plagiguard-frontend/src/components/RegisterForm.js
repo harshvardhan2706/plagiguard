@@ -31,7 +31,7 @@ function RegisterForm() {
 
     setLoading(true);
     try {
-      const res = await api.post('/api/users/register', {
+      const res = await api.post('/api/pgusers/register', {
         fullName: formData.name, // Backend expects fullName
         email: formData.email,
         password: formData.password

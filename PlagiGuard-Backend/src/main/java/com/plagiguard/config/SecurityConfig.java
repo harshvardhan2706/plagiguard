@@ -44,14 +44,14 @@ public class SecurityConfig {
                 .requestMatchers(
                     "/api/admin/login",
                     "/api/admin/signup",
-                    "/api/users/login", 
-                    "/api/users/register",
-                    "/api/users/forgot-password",
-                    "/api/users/reset-password"
+                    "/api/pgusers/login", 
+                    "/api/pgusers/register",
+                    "/api/pgusers/forgot-password",
+                    "/api/pgusers/reset-password"
                 ).permitAll()
                 .requestMatchers(HttpMethod.GET, "/", "/swagger-ui/**", "/api-docs/**").permitAll()
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                .requestMatchers("/api/users/**").hasAnyRole("USER", "ADMIN")
+                .requestMatchers("/api/pgusers/**").hasAnyRole("USER", "ADMIN")
                 .requestMatchers("/api/files/**").hasAnyRole("USER", "ADMIN")
                 .requestMatchers("/api/test/**").authenticated()
                 .anyRequest().authenticated()

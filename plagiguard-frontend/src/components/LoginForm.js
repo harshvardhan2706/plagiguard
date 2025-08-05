@@ -23,7 +23,7 @@ function LoginForm() {
     setError('');
       try {
       console.log('Attempting login...');
-      const res = await api.post('/api/users/login', {
+      const res = await api.post('/api/pgusers/login', {
         email,
         password
       });

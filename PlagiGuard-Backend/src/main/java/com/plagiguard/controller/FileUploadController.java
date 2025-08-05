@@ -19,9 +19,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.plagiguard.dto.UploadResultDTO;
 import com.plagiguard.entity.Upload;
-import com.plagiguard.entity.User;
+import com.plagiguard.entity.PgUser;
 import com.plagiguard.repository.UploadRepository;
-import com.plagiguard.repository.UserRepository;
+import com.plagiguard.repository.PgUserRepository;
 import com.plagiguard.service.FileUploadService;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -67,7 +67,7 @@ public class FileUploadController {
     public ResponseEntity<?> getUploadHistory(@PathVariable Long userId) {
         try {
             // Validate user exists
-            User user = userRepository.findById(userId.intValue())
+            PgUser user = userRepository.findById(userId.intValue())
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
             
             // Get all uploads for the user
@@ -99,7 +99,7 @@ public class FileUploadController {
     }
 
     @Autowired
-    private UserRepository userRepository;
+    private PgUserRepository userRepository;
     
     @Autowired
     private UploadRepository uploadRepository;

@@ -17,16 +17,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.plagiguard.entity.User;
-import com.plagiguard.repository.UserRepository;
+import com.plagiguard.entity.PgUser;
+import com.plagiguard.repository.PgUserRepository;
 
 @RestController
-@RequestMapping("/api/admin/users")
+@RequestMapping("/api/admin/pgusers")
 // @CrossOrigin(origins = {"http://localhost:3000"})
 public class AdminUserController {
 
     @Autowired
-    private UserRepository userRepository;
+    private PgUserRepository userRepository;
 
     @GetMapping("")
     public ResponseEntity<?> getUsers(
@@ -36,7 +36,7 @@ public class AdminUserController {
 
         Sort sort = Sort.by(Direction.fromString(sortOrder), mapSortField(sortBy));
 
-        List<User> users = userRepository.findAll(sort);
+        List<PgUser> users = userRepository.findAll(sort);
 
         if (!"all".equals(status)) {
             users = users.stream()
@@ -49,7 +49,7 @@ public class AdminUserController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getUser(@PathVariable Integer id) {
-        Optional<User> user = userRepository.findById(id);
+        Optional<PgUser> user = userRepository.findById(id);
         if (user.isPresent()) {
             return ResponseEntity.ok(user.get());
         }
@@ -67,12 +67,12 @@ public class AdminUserController {
                 .body(Map.of("error", "Invalid status. Must be 'active' or 'suspended'"));
         }
 
-        Optional<User> userOpt = userRepository.findById(id);
+        Optional<PgUser> userOpt = userRepository.findById(id);
         if (userOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
-        User user = userOpt.get();
+        PgUser user = userOpt.get();
         user.setStatus(newStatus);
         user = userRepository.save(user);
 
